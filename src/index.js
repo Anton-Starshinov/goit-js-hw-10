@@ -1,6 +1,7 @@
 import debounce from 'lodash.debounce';
 import './css/styles.css';
 import { Notify } from 'notiflix';
+import API from './fetchCountries';
 
 const DEBOUNCE_DELAY = 300;
 
@@ -13,7 +14,7 @@ inputEl.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 function onSearch(evt) {
   const searchQuery = evt.target.value.trim();
 
-  fetchCountries(searchQuery)
+  API.fetchCountries(searchQuery)
     .then(blockSelection)
     .catch(Notify.failure('Oops, there is no country with that name'));
 }
@@ -32,14 +33,6 @@ function blockSelection(cuntry) {
   }
 }
 
-function fetchCountries(name) {
-  return fetch(
-    `https://restcountries.com/v3.1/name/${name}?fields=name,capital,population,flags,languages`
-  ).then(response => {
-    return response.json();
-  });
-}
-
 function markupCountyList(cuntry) {
   const markup = cuntry
     .map(({ flags, name }) => {
@@ -48,21 +41,23 @@ function markupCountyList(cuntry) {
     })
     .join('');
 
-  countryListEl.insertAdjacentHTML('beforeend', markup);
+  countryListEl.innerHTML = markup;
 }
 
 function markupCountyInfo(cuntry) {
   const markupInfo = cuntry
     .map(({ flags, name, capital, population, languages }) => {
       return `
-          <h1><img src="${flags.svg}" alt="${name}" width="35" height="35" />"${name.official}"</h1>
+          <h1><img src="${flags.svg}" alt="${name}" width="35" height="35" />"${
+        name.official
+      }"</h1>
           <ul class="country-list">
             <li><p>Capital: ${capital}</p></li>
             <li><p>Population: ${population}</p></li>
-            <li><p>Languages: ${languages}</p></li>
+            <li><p>Languages: ${Object.values(languages)}</p></li>
           </ul>`;
     })
     .join('');
 
-  countryInfoEl.insertAdjacentHTML('beforeend', markupInfo);
+  countryInfoEl.innerHTML = markupInfo;
 }

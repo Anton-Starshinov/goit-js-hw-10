@@ -1,16 +1,14 @@
-// // function fetchCountries(name) {
-// //     return
-// fetch(
-//   'https://restcountries.com/v3.1/name/peru?fields=name,capital,population,flags.svg,languages'
-// )
-//   .then(response => {
-//     return response.json();
-//   })
-//   .then(cuntry => {
-//     console.log(cuntry);
-//   })
-//   .catch(error => {
-//     console.log(error);
-//   });
-// // }
-// // fetchCountries();
+const BASE_URL = 'https://restcountries.com/v3.1/name';
+
+function fetchCountries(name) {
+  return fetch(
+    `${BASE_URL}/${name}?fields=name,capital,population,flags,languages`
+  ).then(response => {
+    if (!response.ok) {
+      throw new Error(response.status);
+    }
+    return response.json();
+  });
+}
+
+export default { fetchCountries };
